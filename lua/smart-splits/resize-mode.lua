@@ -9,9 +9,7 @@ local function smart_autocmd()
         pattern = "*",
         group = group_id,
         callback = function(buf)
-            print("BufEnter", buf)
             buf = buf and buf.buf or vim.api.nvim_get_current_buf()
-            print("bufenter: ", buf)
 
             if not vim.tbl_contains(M.buffers, buf) then
                 table.insert(M.buffers, buf)
