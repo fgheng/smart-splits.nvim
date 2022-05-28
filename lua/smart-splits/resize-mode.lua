@@ -6,7 +6,7 @@ M.autocmd_id = nil
 
 local function smart_autocmd()
     local group_id = vim.api.nvim_create_augroup('smart-splits', { clear = true })
-    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
         pattern = "*",
         group = group_id,
         callback = function(bufnr)
