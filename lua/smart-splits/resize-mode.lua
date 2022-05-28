@@ -96,7 +96,7 @@ function M.end_resize_mode()
     vim.api.nvim_del_augroup_by_name('smart-splits')
 
     M.buffers = {}
-    -- M.keymap_restore = {}
+    keymap_restore = {}
 
     local msg = 'Persistent resize mode disabled. Normal keymaps have been restored.'
     print(msg)

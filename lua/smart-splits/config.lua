@@ -1,11 +1,11 @@
 local M = {
   ignored_buftypes = {
-    -- 'nofile',
-    -- 'quickfix',
-    -- 'prompt',
+    'nofile',
+    'quickfix',
+    'prompt',
   },
   ignored_filetypes = {
-    -- 'NvimTree',
+    'NvimTree',
   },
   move_cursor_same_row = false,
 }
