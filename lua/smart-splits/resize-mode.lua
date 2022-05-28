@@ -9,7 +9,7 @@ function M.start_resize_mode()
     M.windows = vim.api.nvim_list_wins()
     M.buffers = {}
     for _, win in ipairs(M.windows) do
-        if not vim.api.nvim_win_get_config(win).zindex  then
+        if not vim.api.nvim_win_get_config(win).zindex then
             local buf = vim.api.nvim_win_get_buf(win)
             if not vim.tbl_contains(M.buffers, buf) then
                 table.insert(M.buffers, buf)
@@ -18,15 +18,14 @@ function M.start_resize_mode()
             vim.api.nvim_buf_set_keymap(buf, 'n', 'l', ":lua require('smart-splits').resize_right()<CR>", { silent = true })
             vim.api.nvim_buf_set_keymap(buf, 'n', 'j', ":lua require('smart-splits').resize_down()<CR>", { silent = true })
             vim.api.nvim_buf_set_keymap(buf, 'n', 'k', ":lua require('smart-splits').resize_up()<CR>", { silent = true })
-            vim.api.nvim_buf_set_keymap(
-                buf,
-                'n',
-                '<ESC>',
-                ":lua require('smart-splits.resize-mode').end_resize_mode()<CR>",
-                { silent = true }
-            )
         end
     end
+    vim.api.nvim_set_keymap(
+        'n',
+        '<ESC>',
+        ":lua require('smart-splits.resize-mode').end_resize_mode()<CR>",
+        { silent = true }
+    )
 
     local msg = 'Persistent resize mode enabled. Use h/j/k/l to resize, and <ESC> to finish.'
     print(msg)
@@ -39,8 +38,8 @@ function M.end_resize_mode()
         vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
         vim.api.nvim_buf_del_keymap(buf, 'n', 'j')
         vim.api.nvim_buf_del_keymap(buf, 'n', 'k')
-        vim.api.nvim_buf_del_keymap(buf, 'n', '<ESC>')
     end
+    vim.api.nvim_del_keymap(buf, 'n', '<ESC>')
 
     M.buffers = {}
     M.windows = {}
