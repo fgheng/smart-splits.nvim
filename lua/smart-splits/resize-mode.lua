@@ -3,7 +3,6 @@ local buffers = {}
 local keymap_restore = {}
 
 local function set_buf_to_resize_mode(buf)
-    print("set buf to resize mode " .. buf)
     vim.api.nvim_buf_set_keymap(buf, 'n', 'h', ":lua require('smart-splits').resize_left()<CR>", { silent = true })
     vim.api.nvim_buf_set_keymap(buf, 'n', 'l', ":lua require('smart-splits').resize_right()<CR>", { silent = true })
     vim.api.nvim_buf_set_keymap(buf, 'n', 'j', ":lua require('smart-splits').resize_down()<CR>", { silent = true })
@@ -11,7 +10,6 @@ local function set_buf_to_resize_mode(buf)
 end
 
 local function set_buf_to_normal_mode(buf)
-    print("delete " .. buf)
     vim.api.nvim_buf_del_keymap(buf, 'n', 'h')
     vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
     vim.api.nvim_buf_del_keymap(buf, 'n', 'j')
@@ -25,9 +23,7 @@ local function smart_autocmd()
         group = group_id,
         callback = function(buf)
             buf = buf and buf.buf or vim.api.nvim_get_current_buf()
-            print("有新的事件发生，buffer id: " .. buf)
             if not vim.tbl_contains(buffers, buf) then
-                print('他不在buffers里面，加入')
                 table.insert(buffers, buf)
                 local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
                 for _, keymap in pairs(keymaps) do
