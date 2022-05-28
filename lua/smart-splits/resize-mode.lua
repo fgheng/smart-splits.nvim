@@ -5,11 +5,12 @@ M.windows = {}
 M.autocmd_id = nil
 
 local function smart_autocmd()
-    M.autocmd_id = vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    local group_id = vim.api.nvim_create_group('smart-splits')
+    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
         pattern = "*",
+        group = group_id,
         callback = function(bufnr)
-            -- print("smart-splits: BufEnter", bufnr)
-            -- print(vim.inspect(bufnr))
+            print("BufEnter", bufnr)
             bufnr = bufnr and bufnr.buf or vim.api.nvim_get_current_buf()
             M.set_buf_to_resize_mode(bufnr)
         end
@@ -51,7 +52,7 @@ function M.end_resize_mode()
         M.set_buf_to_normal_mode(buf)
     end
     vim.api.nvim_del_keymap('n', '<ESC>')
-    vim.api.nvim_delete_autocmd(M.autocmd_id)
+    vim.api.nvim_del_augroup('smart-splits')
 
     M.buffers = {}
     M.windows = {}
