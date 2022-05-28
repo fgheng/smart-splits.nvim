@@ -1,49 +1,10 @@
 local M = {}
 M.buffers = {}
 
--- for _, buf in pairs(api.nvim_list_bufs()) do
---     if api.nvim_buf_get_option(buf, 'buftype') == 'terminal' then
---         terminal_bufn = buf
---     end
---     local keymaps = api.nvim_buf_get_keymap(buf, 'n')
---     for _, keymap in pairs(keymaps) do
---         if keymap.lhs == "K" then
---             table.insert(keymap_restore, keymap)
---             api.nvim_buf_del_keymap(buf, 'n', 'K')
---         end
---     end
---     api.nvim_buf_set_keymap(buf, 'n', 'K', '<Cmd>lua require("dap.ui.widgets").hover()<CR>', { silent = true })
--- end
---
--- local tmp_bufs = api.nvim_list_bufs()
--- for _, buf in pairs(tmp_bufs) do
---     local keymaps = api.nvim_buf_get_keymap(buf, 'n')
---     for _, keymap in pairs(keymaps) do
---         if keymap.lhs == 'K' then
---             api.nvim_buf_del_keymap(buf, 'n', 'K')
---         end
---     end
--- end
--- for _, keymap in pairs(keymap_restore) do
---     api.nvim_buf_set_keymap(
---         keymap.buffer,
---         keymap.mode,
---         keymap.lhs,
---         keymap.rhs,
---         { silent = keymap.silent == 1 }
---     )
--- end
--- keymap_restore = {}
--- debug_close()
--- if terminal_bufn ~= nil and tmp_bufs[terminal_bufn] ~= nil then
---     api.nvim_buf_delete(terminal_bufn, { force = true })
---     terminal_bufn = nil
--- end
-
 local keymap_restore = {}
 local function smart_autocmd()
     local group_id = vim.api.nvim_create_augroup('smart-splits', { clear = true })
-    vim.api.nvim_create_autocmd({ 'BufAdd' }, {
+    vim.api.nvim_create_autocmd({ 'BufAdd', 'BufNew', 'BufNewFile' }, {
         pattern = "*",
         group = group_id,
         callback = function(buf)
