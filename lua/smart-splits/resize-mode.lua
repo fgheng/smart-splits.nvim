@@ -1,7 +1,23 @@
 local M = {}
-M.buffers = {}
-
+local buffers = {}
 local keymap_restore = {}
+
+local function set_buf_to_resize_mode(buf)
+    print("set buf to resize mode " .. buf)
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'h', ":lua require('smart-splits').resize_left()<CR>", { silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'l', ":lua require('smart-splits').resize_right()<CR>", { silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'j', ":lua require('smart-splits').resize_down()<CR>", { silent = true })
+    vim.api.nvim_buf_set_keymap(buf, 'n', 'k', ":lua require('smart-splits').resize_up()<CR>", { silent = true })
+end
+
+local function set_buf_to_normal_mode(buf)
+    print("delete " .. buf)
+    vim.api.nvim_buf_del_keymap(buf, 'n', 'h')
+    vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
+    vim.api.nvim_buf_del_keymap(buf, 'n', 'j')
+    vim.api.nvim_buf_del_keymap(buf, 'n', 'k')
+end
+
 local function smart_autocmd()
     local group_id = vim.api.nvim_create_augroup('smart-splits', { clear = true })
     vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufAdd', 'WinEnter' }, {
@@ -9,9 +25,10 @@ local function smart_autocmd()
         group = group_id,
         callback = function(buf)
             buf = buf and buf.buf or vim.api.nvim_get_current_buf()
-
-            if not vim.tbl_contains(M.buffers, buf) then
-                table.insert(M.buffers, buf)
+            print("有新的事件发生，buffer id: " .. buf)
+            if not vim.tbl_contains(buffers, buf) then
+                print('他不在buffers里面，加入')
+                table.insert(buffers, buf)
                 local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
                 for _, keymap in pairs(keymaps) do
                     if keymap.lhs == 'h' then
@@ -28,7 +45,8 @@ local function smart_autocmd()
                         vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
                     end
                 end
-                M.set_buf_to_resize_mode(buf)
+                set_buf_to_resize_mode(buf)
+                print('将它设置成resize模式')
             end
         end
     })
@@ -40,8 +58,8 @@ function M.start_resize_mode()
         return
     end
 
-    M.buffers = vim.api.nvim_list_bufs()
-    for _, buf in pairs(M.buffers) do
+    buffers = vim.api.nvim_list_bufs()
+    for _, buf in pairs(buffers) do
         local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
         for _, keymap in pairs(keymaps) do
             if keymap.lhs == 'h' then
@@ -58,7 +76,7 @@ function M.start_resize_mode()
                 vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
             end
         end
-        M.set_buf_to_resize_mode(buf)
+        set_buf_to_resize_mode(buf)
     end
 
     vim.api.nvim_set_keymap(
@@ -75,9 +93,9 @@ function M.start_resize_mode()
 end
 
 function M.end_resize_mode()
-    for _, buf in ipairs(M.buffers) do
+    for _, buf in ipairs(buffers) do
         if vim.api.nvim_buf_is_valid(buf) then
-            M.set_buf_to_normal_mode(buf)
+            set_buf_to_normal_mode(buf)
         end
     end
     for _, keymap in pairs(keymap_restore) do
@@ -95,7 +113,7 @@ function M.end_resize_mode()
     vim.api.nvim_del_keymap('n', '<ESC>')
     vim.api.nvim_del_augroup_by_name('smart-splits')
 
-    M.buffers = {}
+    buffers = {}
     keymap_restore = {}
 
     local msg = 'Persistent resize mode disabled. Normal keymaps have been restored.'
@@ -103,18 +121,5 @@ function M.end_resize_mode()
     vim.notify(msg, vim.log.levels.INFO)
 end
 
-function M.set_buf_to_resize_mode(buf)
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'h', ":lua require('smart-splits').resize_left()<CR>", { silent = true })
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'l', ":lua require('smart-splits').resize_right()<CR>", { silent = true })
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'j', ":lua require('smart-splits').resize_down()<CR>", { silent = true })
-    vim.api.nvim_buf_set_keymap(buf, 'n', 'k', ":lua require('smart-splits').resize_up()<CR>", { silent = true })
-end
-
-function M.set_buf_to_normal_mode(buf)
-    vim.api.nvim_buf_del_keymap(buf, 'n', 'h')
-    vim.api.nvim_buf_del_keymap(buf, 'n', 'l')
-    vim.api.nvim_buf_del_keymap(buf, 'n', 'j')
-    vim.api.nvim_buf_del_keymap(buf, 'n', 'k')
-end
 
 return M
