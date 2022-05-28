@@ -4,7 +4,6 @@ M.buffers = {}
 local keymap_restore = {}
 local function smart_autocmd()
     local group_id = vim.api.nvim_create_augroup('smart-splits', { clear = true })
-    -- vim.api.nvim_create_autocmd({ 'BufAdd', 'BufNew', 'BufNewFile' }, {
     vim.api.nvim_create_autocmd({ 'BufWinEnter', 'BufAdd', 'WinEnter' }, {
         pattern = "*",
         group = group_id,
@@ -42,8 +41,6 @@ function M.start_resize_mode()
     end
 
     M.buffers = vim.api.nvim_list_bufs()
-    print("start resize mode")
-    print(vim.inspect(M.buffers))
     for _, buf in pairs(M.buffers) do
         local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
         for _, keymap in pairs(keymaps) do
@@ -88,8 +85,6 @@ function M.start_resize_mode()
 end
 
 function M.end_resize_mode()
-    print("end resize mode")
-    print(vim.inspect(M.buffers))
     for _, buf in ipairs(M.buffers) do
         if vim.api.nvim_buf_is_valid(buf) then
             M.set_buf_to_normal_mode(buf)
