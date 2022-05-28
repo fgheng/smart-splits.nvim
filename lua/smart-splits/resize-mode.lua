@@ -49,6 +49,7 @@ local function smart_autocmd()
         callback = function(buf)
             print("BufEnter", buf)
             buf = buf and buf.buf or vim.api.nvim_get_current_buf()
+            print("bufenter: ", buf)
 
             if not vim.tbl_contains(M.buffers, buf) then
                 table.insert(M.buffers, buf)
@@ -125,6 +126,8 @@ function M.start_resize_mode()
 end
 
 function M.end_resize_mode()
+    print("end resize mode")
+    print(vim.inspect(M.buffers))
     for _, buf in ipairs(M.buffers) do
         M.set_buf_to_normal_mode(buf)
     end
