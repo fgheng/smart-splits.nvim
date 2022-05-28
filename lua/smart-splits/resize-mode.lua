@@ -131,16 +131,20 @@ function M.end_resize_mode()
     print("end resize mode")
     print(vim.inspect(M.buffers))
     for _, buf in ipairs(M.buffers) do
-        M.set_buf_to_normal_mode(buf)
+        if vim.api.nvim_buf_is_valid(buf) then
+            M.set_buf_to_normal_mode(buf)
+        end
     end
     for _, keymap in pairs(keymap_restore) do
-        vim.api.nvim_buf_set_keymap(
-            keymap.buffer,
-            keymap.mode,
-            keymap.lhs,
-            keymap.rhs,
-            { silent = keymap.silent == 1 }
-        )
+        if vim.api.nvim_buf_is_valid(keymap.buffer) then
+            vim.api.nvim_buf_set_keymap(
+                keymap.buffer,
+                keymap.mode,
+                keymap.lhs,
+                keymap.rhs,
+                { silent = keymap.silent == 1 }
+            )
+        end
     end
 
     vim.api.nvim_del_keymap('n', '<ESC>')
