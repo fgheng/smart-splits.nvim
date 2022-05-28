@@ -40,8 +40,9 @@ function M.start_resize_mode()
         return
     end
 
-    M.buffers = vim.api.nvim_list_bufs()
-    for _, buf in pairs(M.buffers) do
+    -- M.buffers = vim.api.nvim_list_bufs()
+    -- for _, buf in pairs(M.buffers) do
+    for _, buf in pairs(vim.api.nvim_list_bufs()) do
         local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
         for _, keymap in pairs(keymaps) do
             if keymap.lhs == 'h' then
@@ -61,16 +62,6 @@ function M.start_resize_mode()
         M.set_buf_to_resize_mode(buf)
     end
 
-    -- M.windows = vim.api.nvim_list_wins()
-    -- for _, win in ipairs(M.windows) do
-    --     if not vim.api.nvim_win_get_config(win).zindex then
-    --         local buf = vim.api.nvim_win_get_buf(win)
-    --         if not vim.tbl_contains(M.buffers, buf) then
-    --             table.insert(M.buffers, buf)
-    --         end
-    --         M.set_buf_to_resize_mode(buf)
-    --     end
-    -- end
     vim.api.nvim_set_keymap(
         'n',
         '<ESC>',
@@ -85,12 +76,16 @@ function M.start_resize_mode()
 end
 
 function M.end_resize_mode()
-    for _, buf in ipairs(M.buffers) do
-        if vim.api.nvim_buf_is_valid(buf) then
-            M.set_buf_to_normal_mode(buf)
-        end
-    end
+    -- for _, buf in ipairs(M.buffers) do
+    --     if vim.api.nvim_buf_is_valid(buf) then
+    --         M.set_buf_to_normal_mode(buf)
+    --     end
+    -- end
     for _, keymap in pairs(keymap_restore) do
+        if keymap.lhs == 'h' or keymap.lhs == 'j' or keymap.lhs == 'k' or keymap.lhs == 'l' then
+            M.set_buf_to_normal_mode(keymap.buf)
+        end
+
         if vim.api.nvim_buf_is_valid(keymap.buffer) then
             vim.api.nvim_buf_set_keymap(
                 keymap.buffer,
