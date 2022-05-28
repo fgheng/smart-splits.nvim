@@ -82,6 +82,8 @@ function M.start_resize_mode()
     end
 
     M.buffers = vim.api.nvim_list_bufs()
+    print("start resize mode")
+    print(vim.inspect(M.buffers))
     for _, buf in pairs(M.buffers) do
         local keymaps = vim.api.nvim_buf_get_keymap(buf, 'n')
         for _, keymap in pairs(keymaps) do
