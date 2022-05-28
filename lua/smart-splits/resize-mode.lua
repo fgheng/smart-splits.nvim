@@ -5,7 +5,7 @@ local keymap_restore = {}
 local function smart_autocmd()
     local group_id = vim.api.nvim_create_augroup('smart-splits', { clear = true })
     -- vim.api.nvim_create_autocmd({ 'BufAdd', 'BufNew', 'BufNewFile' }, {
-    vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+    vim.api.nvim_create_autocmd({ 'BufWinEnter' }, {
         pattern = "*",
         group = group_id,
         callback = function(buf)
