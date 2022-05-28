@@ -39,7 +39,7 @@ function M.end_resize_mode()
         vim.api.nvim_buf_del_keymap(buf, 'n', 'j')
         vim.api.nvim_buf_del_keymap(buf, 'n', 'k')
     end
-    vim.api.nvim_del_keymap(buf, 'n', '<ESC>')
+    vim.api.nvim_del_keymap('n', '<ESC>')
 
     M.buffers = {}
     M.windows = {}
