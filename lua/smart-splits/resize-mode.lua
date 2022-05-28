@@ -9,6 +9,7 @@ local function smart_autocmd()
         pattern = "*",
         callback = function(bufnr)
             print("smart-splits: BufEnter", bufnr)
+            print(vim.inspect(bufnr))
             bufnr = bufnr or vim.api.nvim_get_current_buf()
             M.set_buf_to_resize_mode(bufnr)
         end
