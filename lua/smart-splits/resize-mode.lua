@@ -52,7 +52,7 @@ function M.end_resize_mode()
         M.set_buf_to_normal_mode(buf)
     end
     vim.api.nvim_del_keymap('n', '<ESC>')
-    vim.api.nvim_del_augroup('smart-splits')
+    vim.api.nvim_del_augroup_by_name('smart-splits')
 
     M.buffers = {}
     M.windows = {}
